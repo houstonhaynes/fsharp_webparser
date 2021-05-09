@@ -4,7 +4,7 @@ This is my first real F# project - something I thought would be a minor stretch.
 
 ## Humble Beginnings
 
-The objective of my first F# venture is to *not* stray too far from examples, and blend them in some territory that's familiar to me in other languages. Here I want to use FSharp.Data to retrieve "meta" elements out of the head of a web page using the [HTML Parser](https://fsprojects.github.io/FSharp.Data/library/HtmlParser.html). The result would return name/property elements as keys and their respective content fields as the values in a simple, single JSON object. I'm borrowing from the "hello world" boilerplate F# function (generated from the template) and adding a few blocks of code from the FSharp.Data sample, but am encountering a few points of friction at the first point of departure - trying implement a tuple function to populate the key/value pairs out of the meta elements in the page.
+The objective of my first F# venture is to *not* stray too far from examples, and blend them in some territory that's familiar to me in other languages. Here I want to use FSharp.Data to retrieve "meta" elements out of the head of a web page using the [HTML Parser](https://fsprojects.github.io/FSharp.Data/library/HtmlParser.html). The result would return name/content elements as keys and their respective content fields as the values in a simple, single JSON object. I'm borrowing from the "hello world" boilerplate F# function (generated from the template) and adding a few blocks of code from the FSharp.Data sample, but am encountering a few points of friction at the first point of departure - trying implement a tuple function to populate the key/value pairs out of the meta elements in the page.
 
 ## Example Request
 
