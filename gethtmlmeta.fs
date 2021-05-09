@@ -49,9 +49,8 @@ module gethtmlmeta =
 
             let links = 
                 results.Descendants ["meta"]
-                |> Seq.choose (fun (x, y) -> 
+                |> Seq.choose (fun x -> 
                        x.TryGetAttribute("name")
-                       y.TryGetAttribute("content")
                        |> Option.map (fun a -> x.InnerText(), a.Value())
                 )
                 |> Seq.toList

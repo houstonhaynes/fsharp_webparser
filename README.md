@@ -68,4 +68,4 @@ C:\repo\fsharp_webparser\gethtmlmeta.fs(52,36): error FS0001: This expression wa
 
 ## The Ask
 
-So - if anyone has ideas on how/where to approach solving for this, I'd be grateful for any helpful hint. I'll update this as I go along. Thanks!
+So - if anyone has ideas on how/where to approach solving for this, I'd appreciate any helpful hint. I'll update this as I go along. Thanks!
