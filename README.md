@@ -22,7 +22,7 @@ http://localhost:7071/api/gethtmlmeta?url=https://h3tech.dev/post/smart-bars-iot
     "twitter:image": "https://h3tech.dev/img/H3_og_wide_HeliosBars.png",
     "twitter:image:type": "image/png",
     "twitter:title": "Toward Smarter Bicycle Handlebars",
-    // [etc.]
+    "_comment": "...and so on and so forth for all meta elements in the page..."
 }
 ```
 
