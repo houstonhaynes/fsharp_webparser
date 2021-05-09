@@ -12,11 +12,7 @@
 	"extensions": [
 		"ms-azuretools.vscode-azurefunctions",
 		"ms-dotnettools.csharp",
-		"humao.rest-client",
-		"ionide.ionide-fsharp",
-		"ionide.ionide-paket",
-		"ionide.ionide-fake",
-		"ionide.mechanic"
+		"humao.rest-client"
 	],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
