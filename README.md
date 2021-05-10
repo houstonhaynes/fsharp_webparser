@@ -45,7 +45,7 @@ The good news is that this provides direct feedback for sample requests.
 
 ![Image of WIP](Screenshot_2021-05-09.png)
 
-The bad news is that there's no ionide in Linux. It's a bit old-fashioned but the debugger will give back errors at runtime. I also run *another* editor instance locally so that I can spy changes to the code. Sometime I use Visual Studio, other times I've opened a new VSCode window - it's not something I've settled on.
+I'm not sure what happened on my local debug environment but I actually got it to work (maybe a .NET COre 3.1 vs .NET 5 thing?) so I've since dropped running in the container, for now.
 
 ## The Current Challenge
 
