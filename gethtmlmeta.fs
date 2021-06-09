@@ -12,12 +12,11 @@ open FSharp.Data
 open System.Text.Json
 
 module gethtmlmeta =
-    // Define a nullable container to deserialize into.
+
     [<AllowNullLiteral>]
     type UrlContainer() =
         member val Url = "" with get, set
 
-    // For convenience, it's better to have a central place for the literal.
     [<Literal>]
     let Url = "url"
 
@@ -50,12 +49,12 @@ module gethtmlmeta =
             let links = 
                 results.Descendants ["meta"]
                 |> Seq.choose (fun x -> 
-                       x.TryGetAttribute("name")
-                       |> Option.map (fun a -> x.InnerText(), a.Value())
+                       x.TryGetAttribute("property")
+                       |> Option.map (fun a -> a.Value(), x.AttributeValue("content"))
                 )
                 |> Seq.toList
 
-            let linksJson = JsonSerializer.Serialize links
+            let linksJson = JsonSerializer.Serialize(Map links)
 
             let responseMessage =             
                 if (String.IsNullOrWhiteSpace(url)) then
