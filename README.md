@@ -4,31 +4,9 @@ This is my first real F# project - something I thought would be a minor stretch.
 
 ## Humble Beginnings
 
-The objective of my first F# venture is to *not* stray too far from examples, and blend them in some territory that's familiar to me in other languages. Here I want to use FSharp.Data to retrieve "meta" elements out of the head of a web page using the [HTML Parser](https://fsprojects.github.io/FSharp.Data/library/HtmlParser.html). The result would return name/content elements as keys and their respective content fields as the values in a simple, single JSON object. I'm borrowing from the "hello world" boilerplate F# function (generated from the template) and adding a few blocks of code from the FSharp.Data sample, but am encountering a few points of friction at the first point of departure - trying implement a tuple function to populate the key/value pairs out of the meta elements in the page.
-
-## Example Request
-
-```html
-http://localhost:7071/api/gethtmlmeta?url=https://h3tech.dev/post/smart-bars-iot/
-```
-
-## Desired JSON output
-
-```json
-{
-    "author": "Houston Haynes",
-    "description": "Teasing features out of an Arduino embedded project using Android and Google Location Services APIs",
-    "twitter:card": "summary_large_image",
-    "twitter:image": "https://h3tech.dev/img/H3_og_wide_HeliosBars.png",
-    "twitter:image:type": "image/png",
-    "twitter:title": "Toward Smarter Bicycle Handlebars",
-    "_comment": "...and so on and so forth for all meta elements in the page..."
-}
-```
+The objective of my first F# venture is to *not* stray too far from examples, and blend them in some territory that's familiar to me in other languages. Here I want to use FSharp.Data to retrieve "meta" elements out of the head of a web page using the [HTML Parser](https://fsprojects.github.io/FSharp.Data/library/HtmlParser.html). The result would return name/content elements as keys and their respective content fields as the values in a simple, single JSON object. I'm borrowing from the "hello world" boilerplate F# function (generated from the template) and adding a few blocks of code from the FSharp.Data sample.
 
 ## The Dev Container
-
-I will spare readers another online digression about how F# is a second-class citizen in the Azure Function App ecosystem. If you're reading this it's likely your already familiar with that long-standing issue. I'll simply jump ahead to how I was able to get a local debug environment working, with its limitations. 
 
 As you can see from the devcontainer.json I added the REST client extension so that the HTTP test file can be used for debugging. I haven't set up a bash to pull the core tools and libraries necessary, but they're listed below. My default container image is Ubuntu 20.
 
@@ -41,31 +19,74 @@ dotnet add package FSharp.Data
 dotnet add package System.Text.Json
 ```
 
-The good news is that this provides direct feedback for sample requests.
+The good news is that this provides direct feedback for sample requests and can run as a stand-alone host on my build machine.
 
 ![Image of WIP](Screenshot_2021-05-09.png)
 
-I'm not sure what happened on my local debug environment but I actually got it to work (maybe a .NET COre 3.1 vs .NET 5 thing?) so I've since dropped running in the container, for now.
+## The Wrinkle
 
-## The Current Challenge
+I was looking for a way to output a "clean" set of key value pairs from the meta property tags. It turns out after some head-scratching that it was a pretty straight-forward affair. I simply had to get my head wrapped around two small points in the FSharp.Data and System.Text.Json APIs.
 
-I've been able to lean on the HTML Parser sample code to provide a quick mental picture of what I'm trying to accomplish. However, with *meta* elements it's a matter of collecting the values out of two different tags. When I try to shift the function to processing a tuple for both the "x" and "y" values the compiler complains about it not matching to the HtmlNode type. So this feels like either I'm missing some syntactic sugar to make this work based on the example, or there's another API or different approach with the HTML Parser that I need to consider.
+First was to get the value of the attribute for each meta property.
 
 ```fsharp
 let links = 
     results.Descendants ["meta"]
-    |> Seq.choose (fun (x, y) ->  // trying to pass two values into tuple
-            x.TryGetAttribute("name")
-            y.TryGetAttribute("content") // this is what I'm thinking
-            |> Option.map (fun (a, b) -> x.Value(), y.Value())
+    |> Seq.choose (fun x -> 
+            x.TryGetAttribute("property")
+            |> Option.map (fun a -> a.Value(), x.AttributeValue("content"))
     )
     |> Seq.toList
 ```
 
-```
-C:\repo\fsharp_webparser\gethtmlmeta.fs(52,36): error FS0001: This expression was expected to have type 'HtmlNode' but here has type ''a * 'b' [C:\repo\fsharp_webparser\FunctionsInFSharp.fsproj]
+I had mistakenly pulled the attribute instead of the attribute **value**.
+
+Second was to parse the list into a concise key/value record set. The part that I was missing (and I spent way too much time diverted to options which had nothing to do with it) was to add the Map function to the call. This maps the elements to the key and value position of each set. 
+
+With just List passed directly to the JSON serializer ...
+
+```fsharp
+let linksJson = JsonSerializer.Serialize links
 ```
 
-## The Ask
+you get the following - a list with "ItemX" etc for the keys
 
-So - if anyone has ideas on how/where to approach solving for this, I'd appreciate any helpful hint. I'll update this as I go along. Thanks!
+```json
+
+[
+  {
+    "Item1": "og:image",
+    "Item2": "https://h3tech.dev/img/h3_og_wide_HeliosBars.png"
+  },
+  {
+    "Item1": "og:title",
+    "Item2": "Toward Smarter Bicycle Handlebars"
+  }
+]
+
+// etc
+```
+
+But when you apply a Map as you pass in the list
+
+```fsharp
+let linksJson = JsonSerializer.Serialize(Map links)
+```
+
+I get the expected application of the tuples to their respective position.
+
+```json
+{
+  "article:modified_time": "2021-05-27T18:55:44-07:00",
+  "article:published_time": "2019-05-15T14:59:43\u002B05:30",
+  "og:description": "Teasing features out of an Arduino embedded project using Android and Google Location Services APIs",
+  "og:image": "https://h3tech.dev/img/h3_og_wide_HeliosBars.png",
+  "og:image:height": "630",
+  "og:image:type": "image/png",
+  "og:image:width": "1200",
+  "og:title": "Toward Smarter Bicycle Handlebars",
+  "og:url": "https://h3tech.dev/post/smart-bars-iot/"
+}
+```
+
+There's some possible logic that may need to exist for situations where certain openGraph tags are not available (and other fields are substituted from the page). But I'll sort that out as I encounter issues. So far all of the pages I've pulled for placement in my site have had populated tags. So it will continue to run as-is in a dev container on my local build machine and it'll continue to serve up og meta tags requested by Hugo to be embedded in the static site pages.
