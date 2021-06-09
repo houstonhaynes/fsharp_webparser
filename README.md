@@ -17,8 +17,6 @@ dotnet add package System.Text.Json
 
 The good news is that this provides direct feedback for sample requests and can run as a stand-alone host on my build machine.
 
-![Image of WIP](Screenshot_2021-05-09.png)
-
 ## The Wrinkle
 
 I was looking for a way to output a "clean" set of key value pairs from the meta property tags. It turns out after some head-scratching that it was a pretty straight-forward affair. I simply had to get my head wrapped around two small points in the FSharp.Data and System.Text.Json APIs.
