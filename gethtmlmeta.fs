@@ -24,28 +24,22 @@ module gethtmlmeta =
     let run ([<HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)>]req: HttpRequest) (log: ILogger) =
         async {
             log.LogInformation("F# HTTP trigger function processed a request.")
-
             let urlOpt = 
                 if req.Query.ContainsKey(Url) then
                     Some(req.Query.[Url].[0])
                 else
                     None
-
             use stream = new StreamReader(req.Body)
             let! reqBody = stream.ReadToEndAsync() |> Async.AwaitTask
-
             let data = JsonConvert.DeserializeObject<UrlContainer>(reqBody)
-
             let url =
                 match urlOpt with
                 | Some n -> n
                 | None ->
                    match data with
                    | null -> ""
-                   | nc -> nc.Url
-            
+                   | nc -> nc.Url          
             let results = HtmlDocument.Load(url)
-
             let links = 
                 results.Descendants ["meta"]
                 |> Seq.choose (fun x -> 
@@ -53,14 +47,11 @@ module gethtmlmeta =
                        |> Option.map (fun a -> a.Value(), x.AttributeValue("content"))
                 )
                 |> Seq.toList
-
             let linksJson = JsonSerializer.Serialize(Map links)
-
             let responseMessage =             
                 if (String.IsNullOrWhiteSpace(url)) then
                     "This HTTP triggered function executed successfully. Pass a url in the query string or in the request body for a JSON response."
                 else
                     linksJson
-
             return OkObjectResult(responseMessage) :> IActionResult
         } |> Async.StartAsTask
