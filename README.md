@@ -80,6 +80,6 @@ I get the expected application of the tuples to their respective position.
   "og:url": "https://h3tech.dev/post/smart-bars-iot/"
 }
 ```
-![F# in Dev Container](Screenshot.png)
+![F# in Dev Container](screenshot2.png)
 
 There may be situations where certain openGraph tags are not available (and other fields would need to be substituted from the page). But I'll sort that out as I encounter issues. So far all of the pages I've pulled for placement in my site have had populated tags. So it will continue to run as-is in a dev container on my local build machine and it'll continue to serve up og meta tags requested by Hugo to be embedded in the static site pages.
