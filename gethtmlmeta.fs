@@ -40,18 +40,18 @@ module gethtmlmeta =
                    | null -> ""
                    | nc -> nc.Url          
             let results = HtmlDocument.Load(url)
-            let links = 
+            let ogProperties = 
                 results.Descendants ["meta"]
                 |> Seq.choose (fun x -> 
                        x.TryGetAttribute("property")
                        |> Option.map (fun a -> a.Value(), x.AttributeValue("content"))
                 )
                 |> Seq.toList
-            let linksJson = JsonSerializer.Serialize(Map links)
+            let ogPropsJson = JsonSerializer.Serialize(Map ogProperties)
             let responseMessage =             
                 if (String.IsNullOrWhiteSpace(url)) then
                     "This HTTP triggered function executed successfully. Pass a url in the query string or in the request body for a JSON response."
                 else
-                    linksJson
+                    ogPropsJson
             return OkObjectResult(responseMessage) :> IActionResult
         } |> Async.StartAsTask
