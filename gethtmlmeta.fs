@@ -50,7 +50,7 @@ module gethtmlmeta =
             let ogPropsJson = JsonSerializer.Serialize(Map ogProperties)
             let responseMessage =             
                 if (String.IsNullOrWhiteSpace(url)) then
-                    "This HTTP triggered function executed successfully. Pass a url in the query string or in the request body for a JSON response."
+                    "This HTTP triggered function executed successfully. Pass a url in the query string for a JSON response."
                 else
                     ogPropsJson
             return OkObjectResult(responseMessage) :> IActionResult
