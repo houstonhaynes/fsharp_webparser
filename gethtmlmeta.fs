@@ -22,16 +22,20 @@ module gethtmlmeta =
 
     [<FunctionName("gethtmlmeta")>]
     let run ([<HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)>]req: HttpRequest) (log: ILogger) =
+
         async {
             log.LogInformation("F# HTTP trigger function processed a request.")
+
             let urlOpt = 
                 if req.Query.ContainsKey(Url) then
                     Some(req.Query.[Url].[0])
                 else
                     None
+            
             use stream = new StreamReader(req.Body)
             let! reqBody = stream.ReadToEndAsync() |> Async.AwaitTask
             let data = JsonConvert.DeserializeObject<UrlContainer>(reqBody)
+            
             let url =
                 match urlOpt with
                 | Some n -> n
@@ -39,19 +43,30 @@ module gethtmlmeta =
                    match data with
                    | null -> ""
                    | nc -> nc.Url          
+            
             let results = HtmlDocument.Load(url)
-            let ogProperties = 
+            
+            let openGraphProperties = 
                 results.Descendants ["meta"]
                 |> Seq.choose (fun x -> 
                        x.TryGetAttribute("property")
                        |> Option.map (fun a -> a.Value(), x.AttributeValue("content"))
                 )
-                |> Seq.toList
-            let ogPropsJson = JsonSerializer.Serialize(Map ogProperties)
-            let responseMessage =             
-                if (String.IsNullOrWhiteSpace(url)) then
-                    "This HTTP triggered function executed successfully. Pass a url in the query string for a JSON response."
-                else
-                    ogPropsJson
-            return OkObjectResult(responseMessage) :> IActionResult
+                |> Seq.map (fun (a, b) -> a.Replace(":",""), b)
+
+
+            let authorAppValues = 
+                results.Descendants ["meta"]
+                |> Seq.choose (fun x -> 
+                       x.TryGetAttribute("name")
+                       |> Option.map (fun a -> a.Value(), x.AttributeValue("content"))
+                )
+                |> Seq.map (fun (a, b) -> a.Replace(":",""), b)
+                |> Seq.map (fun (a, b) -> a.Replace("-",""), b)
+
+
+            let fullSeq = Seq.append openGraphProperties authorAppValues
+            
+            return OkObjectResult(Map fullSeq) :> IActionResult
+
         } |> Async.StartAsTask
