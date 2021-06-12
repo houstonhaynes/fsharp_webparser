@@ -18,7 +18,7 @@ The good news is that this provides direct feedback for sample requests and can 
 
 ## An Ionide Wrinkle (.NET Core 3.1 + .NET 5 = :two_hearts: )
 
-I felt a bit ham-strung by *not* seeing Ionide "light up" in VS Code within the container. After some rather whinging on the F# slack #beginners channel some clarity emerged that **both** .NET Core 3.1 an .NET 5 needed to be available in the container. This is because .NET 5 is used by Ionide to do the real-time parsing of the code against he compiler to inform the editor layout. 
+I felt a bit ham-strung by *not* seeing Ionide "light up" in VS Code within the container. After some whinging on the F# slack #beginners channel some clarity emerged that **both** .NET Core 3.1 an .NET 5 needed to be available in the container. This is because .NET 5 is used by Ionide to do the real-time parsing of the code against he compiler to inform the editor layout. 
 
 ![Ionide in F# Azure Functions](screenshot2.png)
 
