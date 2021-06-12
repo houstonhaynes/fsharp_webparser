@@ -20,7 +20,7 @@ module gethtmlmeta =
     let Url = "url"
 
     [<FunctionName("gethtmlmeta")>]
-    let run ([<HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)>]req: HttpRequest) (log: ILogger) =
+    let run ([<HttpTrigger(AuthorizationLevel.Function, "get", Route = null)>]req: HttpRequest) (log: ILogger) =
 
         async {
             log.LogInformation("F# HTTP trigger function processed a request.")
