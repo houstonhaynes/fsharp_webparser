@@ -9,7 +9,6 @@ open Microsoft.AspNetCore.Http
 open Newtonsoft.Json
 open Microsoft.Extensions.Logging
 open FSharp.Data
-open System.Text.Json
 
 module gethtmlmeta =
 
