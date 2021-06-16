@@ -55,13 +55,11 @@ module gethtmlmeta =
 
 
             let authorAppValues = 
-                results.Descendants ["meta"]
+                Seq.map ((fun (a, b) -> a.Replace(":",""), b) >> (fun (a, b) -> a.Replace("-",""), b)) (results.Descendants ["meta"]
                 |> Seq.choose (fun x -> 
                        x.TryGetAttribute("name")
                        |> Option.map (fun a -> a.Value(), x.AttributeValue("content"))
-                )
-                |> Seq.map (fun (a, b) -> a.Replace(":",""), b)
-                |> Seq.map (fun (a, b) -> a.Replace("-",""), b)
+                ))
 
 
             let fullSeq = Seq.append openGraphProperties authorAppValues
